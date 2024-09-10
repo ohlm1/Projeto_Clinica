@@ -116,4 +116,3 @@ class Paciente(db.Model):
 
 class PacienteNaoEcontrado(Exception):
     pass
-    
