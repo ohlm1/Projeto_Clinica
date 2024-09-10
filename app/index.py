@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, abort
+from flask import Blueprint, request, jsonify, abort, render_template
 from registro_model import Paciente, PacienteNaoEcontrado, Endereco
 
 paciente_blueprint = Blueprint('paciente', __name__)
@@ -7,18 +7,36 @@ endereco_blueprint = Blueprint('endereco', __name__)
 class PacienteError(Exception):
     def __init__(self, message):
         self.message = message
+        
+@paciente_blueprint.route('/', methods=['GET'])
+def add_paciente_form():
+    return render_template('index.html')
 
 @paciente_blueprint.route('/paciente', methods=['POST'])
 def adicionar_paciente():
-    paciente_data = request.json
     try:
+        nome = request.form['nome']
+        CPF = request.form['CPF']
+        telefone = request.form['telefone']
+        email = request.form['email']
+        logradouro = request.form['logradouro']
+        linha_de_endereco1 = request.form['linha_de_endereco1']
+        numero = request.form['numero']
+
         novo_paciente = Paciente.criar_paciente(
-            nome=paciente_data['nome'],
-            CPF=paciente_data['CPF'],
-            telefone=paciente_data['telefone'],
-            email=paciente_data['email']
+            nome=nome,
+            CPF=CPF,
+            telefone=telefone,
+            email=email
         )
-        return jsonify({"paciente_id": novo_paciente.id}), 201
+
+        endereco = novo_paciente.adicionar_endereco(
+            logradouro=logradouro,
+            linha_de_endereco1=linha_de_endereco1,
+            numero=numero
+        )
+
+        return jsonify({"paciente_id": novo_paciente.id, "endereco_id": endereco.id}), 201
     except Exception as e:
         raise PacienteError(f"Error while creating paciente: {str(e)}")
 
@@ -88,3 +106,19 @@ def listar_enderecos():
         return jsonify([endereco.to_dict() for endereco in enderecos]), 200
     except Exception as e:
         raise PacienteError(f"Error while listing enderecos: {str(e)}")
+    
+@paciente_blueprint.route('/paciente/<int:id>', methods=['DELETE'])
+def deletar_paciente(id):
+    try:
+        paciente = Paciente.query.get(id)
+        if paciente:
+            if paciente.endereco:
+                paciente.endereco.deletar_endereco()
+            paciente.deletar_paciente()
+            return jsonify({"message": "Paciente deletado com sucesso"}), 200
+        else:
+            raise PacienteNaoEcontrado(f"Paciente com ID {id} não encontrado.")
+    except PacienteNaoEcontrado as e:
+        raise PacienteError(str(e))
+    except Exception as e:
+        raise PacienteError(f"Error while deleting paciente: {str(e)}")
