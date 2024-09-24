@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualizar Consulta</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Atualizar Consulta</h1>
+        <form method="POST" action="/atualizar_consulta/{{ consulta.id }}">
+            <div class="form-group">
+                <label for="paciente_id">Paciente</label>
+                <select id="paciente_id" name="paciente_id" class="form-control" required>
+                    <option value="{{ consulta.paciente.id }}">{{ consulta.paciente.nome }}</option>
+                    {% for paciente in pacientes %}
+                        <option value="{{ paciente.id }}">{{ paciente.nome }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="data_hora">Data e Hora</label>
+                <input type="datetime-local" id="data_hora" name="data_hora" class="form-control" value="{{ consulta.data_hora }}" required>
+            </div>
+            <div class="form-group">
+                <label for="duracao">Duração (minutos)</label>
+                <input type="number" id="duracao" name="duracao" class="form-control" value="{{ consulta.duracao }}" required>
+            </div>
+            <div class="form-group">
+                <label for="observacoes">Observações</label>
+                <textarea id="observacoes" name="observacoes" class="form-control">{{ consulta.observacoes }}</textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Atualizar Consulta</button>
+            <a href="/listar_consultas" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</body>
+</html>

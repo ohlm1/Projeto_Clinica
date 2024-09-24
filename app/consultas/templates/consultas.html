@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Consultas</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Listar Consultas</h1>
+        <a href="/criar_consulta" class="btn btn-primary">Criar Nova Consulta</a>
+        <table class="table mt-3">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Paciente</th>
+                    <th>Data e Hora</th>
+                    <th>Duração (minutos)</th>
+                    <th>Observações</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for consulta in consultas %}
+                <tr>
+                    <td>{{ consulta.id }}</td>
+                    <td>{{ consulta.paciente.nome }}</td>
+                    <td>{{ consulta.data_hora }}</td>
+                    <td>{{ consulta.duracao }}</td>
+                    <td>{{ consulta.observacoes }}</td>
+                    <td>
+                        <a href="/atualizar_consulta/{{ consulta.id }}" class="btn btn-warning">Editar</a>
+                        <form action="/deletar_consulta/{{ consulta.id }}" method="POST" style="display:inline;">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja deletar esta consulta?')">Deletar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

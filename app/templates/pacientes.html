@@ -22,6 +22,7 @@
                 <th>ID</th>
                 <th>Nome</th>
                 <th>CPF</th>
+                <th>Data de Nascimento</th>
                 <th>Telefone</th>
                 <th>Email</th>
                 <th>Endereço</th>
@@ -33,9 +34,16 @@
                 <td>{{ paciente.id }}</td>
                 <td>{{ paciente.nome }}</td>
                 <td>{{ paciente.CPF }}</td>
+                <td>{{ paciente.data_nascimento.strftime('%d/%m/%Y') }}</td>  <!-- Formatação da data -->
                 <td>{{ paciente.telefone }}</td>
                 <td>{{ paciente.email }}</td>
-                <td>{{ paciente.endereco.logradouro }}, {{ paciente.endereco.linha_de_endereco1 }}, {{ paciente.endereco.numero }}{% if not paciente.endereco %}Nenhum endereço cadastrado{% endif %}</td>
+                <td>
+                    {% if paciente.endereco %}
+                        {{ paciente.endereco.logradouro }}, {{ paciente.endereco.linha_de_endereco1 }}, {{ paciente.endereco.numero }}
+                    {% else %}
+                        Nenhum endereço cadastrado
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </tbody>

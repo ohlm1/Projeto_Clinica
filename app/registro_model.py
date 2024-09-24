@@ -1,4 +1,6 @@
 from __init__ import db
+from datetime import datetime
+
 
 class Endereco(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -54,12 +56,14 @@ class Paciente(db.Model):
     email = db.Column(db.String(100), nullable=False)
     endereco_id = db.Column(db.Integer, db.ForeignKey('endereco.id'))
     endereco = db.relationship('Endereco', backref=db.backref('paciente', uselist=False))
+    data_nascimento = db.Column(db.Date, nullable=True)  # Adicionando o campo de data de nascimento
 
-    def __init__(self, nome, CPF, telefone, email, endereco_id=None):
+    def __init__(self, nome, CPF, telefone, email, data_nascimento, endereco_id=None):
         self.nome = nome
         self.CPF = CPF
         self.telefone = telefone
         self.email = email
+        self.data_nascimento = data_nascimento  # Inicializando o novo atributo
         self.endereco_id = endereco_id
 
     def to_dict(self):
@@ -69,12 +73,13 @@ class Paciente(db.Model):
             "CPF": self.CPF,
             "telefone": self.telefone,
             "email": self.email,
+            "data_nascimento": self.data_nascimento.isoformat() if self.data_nascimento else None,  # Convertendo para formato ISO
             "endereco": self.endereco.to_dict() if self.endereco else None
         }
 
     @classmethod
-    def criar_paciente(cls, nome, CPF, telefone, email):
-        novo_paciente = cls(nome=nome, CPF=CPF, telefone=telefone, email=email, endereco_id=None)
+    def criar_paciente(cls, nome, CPF, telefone, email, data_nascimento):
+        novo_paciente = cls(nome=nome, CPF=CPF, telefone=telefone, email=email, data_nascimento=data_nascimento, endereco_id=None)
         db.session.add(novo_paciente)
         db.session.commit()
         return novo_paciente
@@ -90,11 +95,12 @@ class Paciente(db.Model):
     def buscar_paciente(cls, id):
         return cls.query.get(id)
 
-    def atualizar_paciente(self, nome, CPF, telefone, email):
+    def atualizar_paciente(self, nome, CPF, telefone, email, data_nascimento):
         self.nome = nome
         self.CPF = CPF
         self.telefone = telefone
         self.email = email
+        self.data_nascimento = data_nascimento  # Atualizando a data de nascimento
         db.session.commit()
 
     def deletar_paciente(self):

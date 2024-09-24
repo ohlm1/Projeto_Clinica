@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Pacientes</title>
+    <title>Atualizar Paciente</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -140,36 +140,37 @@
             }
         }
     </style>
+</head>
 <body>
 
     <div class="container">
-        <h2>Registro de Novos Pacientes</h2>
-        <form action="/criar_paciente" method="POST">
+        <h2>Atualizar Paciente</h2>
+        <form action="/atualizar_paciente/{{ paciente.id }}" method="POST">
             <label for="nome">Nome Completo:</label>
-            <input type="text" id="nome" name="nome" required>
+            <input type="text" id="nome" name="nome" value="{{ paciente.nome }}" required>
 
             <label for="data_nascimento">Data de Nascimento:</label>
-            <input type="date" id="data_nascimento" name="data_nascimento" required>
+            <input type="date" id="data_nascimento" name="data_nascimento" value="{{ paciente.data_nascimento }}" required>
 
             <label for="email">E-mail:</label>
-            <input type="email" id="email" name="email" required>
+            <input type="email" id="email" name="email" value="{{ paciente.email }}" required>
 
             <label for="telefone">Telefone:</label>
-            <input type="tel" id="telefone" name="telefone" required>
+            <input type="tel" id="telefone" name="telefone" value="{{ paciente.telefone }}" required>
 
             <label for="CPF">CPF:</label>
-            <input type="text" id="CPF" name="CPF" required>
+            <input type="text" id="CPF" name="CPF" value="{{ paciente.CPF }}" required>
 
             <label for="logradouro">Logradouro:</label>
-            <input type="text" id="logradouro" name="logradouro" required>
+            <input type="text" id="logradouro" name="logradouro" value="{{ paciente.endereco.logradouro }}" required>
 
             <label for="linha_de_endereco1">Linha de Endereço 1:</label>
-            <input type="text" id="linha_de_endereco1" name="linha_de_endereco1" required>
+            <input type="text" id="linha_de_endereco1" name="linha_de_endereco1" value="{{ paciente.endereco.linha_de_endereco1 }}" required>
 
             <label for="numero">Número:</label>
-            <input type="text" id="numero" name="numero" required>
+            <input type="text" id="numero" name="numero" value="{{ paciente.endereco.numero }}" required>
 
-            <button type="submit">Registrar Paciente</button>
+            <button type="submit">Atualizar Paciente</button>
         </form>
     </div>
 

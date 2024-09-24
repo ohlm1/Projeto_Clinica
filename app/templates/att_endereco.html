@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro de Pacientes</title>
+    <title>Atualizar Endereço</title>
     <style>
+        /* Estilos do CSS */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(to right, #e0f7fa, #80deea);
@@ -36,6 +37,13 @@
             line-height: 1.2;
         }
 
+        .info {
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #555;
+        }
+
         label {
             display: block;
             margin-bottom: 0.5rem;
@@ -43,12 +51,7 @@
             color: #555;
         }
 
-        input[type="text"],
-        input[type="date"],
-        input[type="email"],
-        input[type="tel"],
-        select,
-        textarea {
+        input[type="text"] {
             width: 100%;
             padding: 0.75rem;
             margin-bottom: 1rem;
@@ -59,9 +62,7 @@
             box-sizing: border-box;
         }
 
-        input:focus,
-        select:focus,
-        textarea:focus {
+        input:focus {
             border-color: #00796b;
             box-shadow: 0 0 0.5rem rgba(0, 121, 107, 0.3);
             outline: none;
@@ -89,30 +90,17 @@
             outline: none;
         }
 
-        input::placeholder,
-        textarea::placeholder {
-            color: #999;
-        }
-
         @media (max-width: 768px) {
             .container {
                 padding: 1.5rem;
             }
-
             h2 {
                 font-size: 1.25rem;
             }
-
-            input[type="text"],
-            input[type="date"],
-            input[type="email"],
-            input[type="tel"],
-            select,
-            textarea {
+            input[type="text"] {
                 font-size: 0.875rem;
                 padding: 0.625rem;
             }
-
             button {
                 font-size: 1rem;
                 padding: 0.625rem;
@@ -123,53 +111,39 @@
             h2 {
                 font-size: 1rem;
             }
-
-            input[type="text"],
-            input[type="date"],
-            input[type="email"],
-            input[type="tel"],
-            select,
-            textarea {
+            input[type="text"] {
                 font-size: 0.75rem;
                 padding: 0.5rem;
             }
-
             button {
                 font-size: 0.875rem;
                 padding: 0.5rem;
             }
         }
     </style>
+</head>
 <body>
 
     <div class="container">
-        <h2>Registro de Novos Pacientes</h2>
-        <form action="/criar_paciente" method="POST">
-            <label for="nome">Nome Completo:</label>
-            <input type="text" id="nome" name="nome" required>
+        <h2>Atualizar Endereço</h2>
 
-            <label for="data_nascimento">Data de Nascimento:</label>
-            <input type="date" id="data_nascimento" name="data_nascimento" required>
+        <!-- Informações do paciente -->
+        <div class="info">
+            <p><strong>Paciente:</strong> {{ paciente.nome }}</p>
+            <p><strong>CPF:</strong> {{ paciente.CPF }}</p>
+        </div>
 
-            <label for="email">E-mail:</label>
-            <input type="email" id="email" name="email" required>
-
-            <label for="telefone">Telefone:</label>
-            <input type="tel" id="telefone" name="telefone" required>
-
-            <label for="CPF">CPF:</label>
-            <input type="text" id="CPF" name="CPF" required>
-
+        <form action="/atualizar_endereco/{{ endereco.id }}" method="POST">
             <label for="logradouro">Logradouro:</label>
-            <input type="text" id="logradouro" name="logradouro" required>
+            <input type="text" id="logradouro" name="logradouro" value="{{ endereco.logradouro }}" required>
 
             <label for="linha_de_endereco1">Linha de Endereço 1:</label>
-            <input type="text" id="linha_de_endereco1" name="linha_de_endereco1" required>
+            <input type="text" id="linha_de_endereco1" name="linha_de_endereco1" value="{{ endereco.linha_de_endereco1 }}" required>
 
             <label for="numero">Número:</label>
-            <input type="text" id="numero" name="numero" required>
+            <input type="text" id="numero" name="numero" value="{{ endereco.numero }}" required>
 
-            <button type="submit">Registrar Paciente</button>
+            <button type="submit">Atualizar Endereço</button>
         </form>
     </div>
 

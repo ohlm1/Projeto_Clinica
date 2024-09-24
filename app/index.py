@@ -1,15 +1,11 @@
-from flask import Blueprint, request, jsonify, abort, render_template,redirect,url_for
-from registro_model import Paciente, PacienteNaoEcontrado, Endereco
+from flask import Blueprint, request, jsonify, abort, render_template, redirect
+from datetime import datetime
+from registro_model import Paciente, Endereco
 from __init__ import db
-
 
 paciente_blueprint = Blueprint('paciente', __name__)
 endereco_blueprint = Blueprint('endereco', __name__)
 
-class PacienteError(Exception):
-    def __init__(self, message):
-        self.message = message
-        
 @paciente_blueprint.route('/criar_paciente', methods=['GET'])
 def add_paciente_form():
     return render_template('index.html')
@@ -17,12 +13,32 @@ def add_paciente_form():
 @paciente_blueprint.route('/criar_paciente', methods=['POST'])
 def criar_paciente():
     form_data = request.form
-    endereco = Endereco(logradouro=form_data['logradouro'], linha_de_endereco1=form_data['linha_de_endereco1'], numero=form_data['numero'])
+
+    # Criando o endereço
+    endereco = Endereco(
+        logradouro=form_data['logradouro'],
+        linha_de_endereco1=form_data['linha_de_endereco1'],
+        numero=form_data['numero']
+    )
     db.session.add(endereco)
     db.session.commit()
-    paciente = paciente = Paciente(nome=form_data['nome'], CPF=form_data['CPF'], telefone=form_data['telefone'], email=form_data['email'], endereco_id=endereco.id)
+    
+    # Convertendo a data de nascimento para o formato correto
+    data_nascimento_str = form_data['data_nascimento']
+    data_nascimento = datetime.strptime(data_nascimento_str, '%Y-%m-%d').date()  # Ajuste o formato conforme necessário
+
+    # Criando o paciente
+    paciente = Paciente(
+        nome=form_data['nome'],
+        CPF=form_data['CPF'],
+        telefone=form_data['telefone'],
+        email=form_data['email'],
+        data_nascimento=data_nascimento,  # Adicionando o argumento data_nascimento
+        endereco_id=endereco.id
+    )
     db.session.add(paciente)
     db.session.commit()
+    
     return redirect('/listar_pacientes')
 
 @paciente_blueprint.route('/listar_pacientes', methods=['GET'])
@@ -38,13 +54,33 @@ def buscar_paciente(id):
     else:
         return jsonify({"error": "Paciente não encontrado"}), 404
 
-@paciente_blueprint.route('/atualizar_paciente/<int:id>', methods=['PUT'])
+@paciente_blueprint.route('/atualizar_paciente/<int:id>', methods=['GET'])
+def atualizar_paciente_form(id):
+    paciente = Paciente.buscar_paciente(id)
+    if paciente:
+        return render_template('att_paciente.html', paciente=paciente)
+    else:
+        return jsonify({"error": "Paciente não encontrado"}), 404
+
+@paciente_blueprint.route('/atualizar_paciente/<int:id>', methods=['POST'])
 def atualizar_paciente(id):
     paciente = Paciente.buscar_paciente(id)
     if paciente:
-        data = request.get_json()
-        paciente.atualizar_paciente(data.get('nome'), data.get('CPF'), data.get('telefone'), data.get('email'))
-        return jsonify(paciente.to_dict())
+        form_data = request.form
+        
+        # Convertendo a data de nascimento para o formato correto
+        data_nascimento_str = form_data['data_nascimento']
+        data_nascimento = datetime.strptime(data_nascimento_str, '%Y-%m-%d').date()  # Ajuste o formato conforme necessário
+        
+        # Atualizando os dados do paciente
+        paciente.nome = form_data['nome']
+        paciente.data_nascimento = data_nascimento  # Adicionando a data formatada
+        paciente.CPF = form_data['CPF']
+        paciente.telefone = form_data['telefone']
+        paciente.email = form_data['email']
+        
+        db.session.commit()
+        return redirect('/listar_pacientes')
     else:
         return jsonify({"error": "Paciente não encontrado"}), 404
 
@@ -56,39 +92,38 @@ def deletar_paciente(id):
     else:
         return jsonify({"error": "Paciente não encontrado"}), 404
     
-@paciente_blueprint.route('/adicionar_endereco/<int:id>', methods=['PUT'])
-def adicionar_endereco(id):
-    paciente = Paciente.buscar_paciente(id)
-    if paciente:
-        data = request.get_json()
-        logradouro = data.get('logradouro')
-        linha_de_endereco1 = data.get('linha_de_endereco1')
-        numero = data.get('numero')
-        paciente.adicionar_endereco(logradouro, linha_de_endereco1, numero)
-        return jsonify(paciente.to_dict())
-    else:
-        return jsonify({"error": "Paciente não encontrado"}), 404
-
 @paciente_blueprint.route('/buscar_endereco/<int:id>', methods=['GET'])
 def buscar_endereco(id):
-    endereco = Endereco.buscar_endereco(id)
+    endereco = Endereco.buscar_endereco(id)  # Alterado para singular
     if endereco:
-        return jsonify(endereco.to_dict())
+        paciente = Paciente.query.get(endereco.paciente.id)  # Obtendo o paciente associado ao endereço
+        return render_template('att_endereco.html', endereco=endereco, paciente=paciente)  # Passar o paciente
     else:
         return jsonify({"error": "Endereço não encontrado"}), 404
 
-@paciente_blueprint.route('/atualizar_endereco/<int:id>', methods=['PUT'])
+
+@paciente_blueprint.route('/atualizar_endereco/<int:id>', methods=['GET', 'POST'])
 def atualizar_endereco(id):
     endereco = Endereco.buscar_endereco(id)
     if endereco:
-        data = request.get_json()
-        logradouro = data.get('logradouro')
-        linha_de_endereco1 = data.get('linha_de_endereco1')
-        numero = data.get('numero')
-        endereco.atualizar_endereco(logradouro, linha_de_endereco1, numero)
-        return jsonify(endereco.to_dict())
+        paciente = endereco.paciente  # Acesse o paciente através da relação
+        if request.method == 'POST':
+            form_data = request.form
+            
+            # Atualizando os dados do endereço
+            endereco.logradouro = form_data['logradouro']
+            endereco.linha_de_endereco1 = form_data['linha_de_endereco1']
+            endereco.numero = form_data['numero']
+            
+            db.session.commit()
+            return redirect('/listar_enderecos')  # Redirecionar para a lista de endereços
+        
+        return render_template('att_endereco.html', endereco=endereco, paciente=paciente)  # Passar o paciente também
     else:
         return jsonify({"error": "Endereço não encontrado"}), 404
+
+
+
 
 @paciente_blueprint.route('/deletar_endereco/<int:id>', methods=['DELETE'])
 def deletar_endereco(id):
@@ -101,5 +136,4 @@ def deletar_endereco(id):
 @paciente_blueprint.route('/listar_enderecos', methods=['GET'])
 def listar_enderecos():
     enderecos = Endereco.listar_enderecos()
-    enderecos_dict = [endereco.to_dict() for endereco in enderecos]
-    return jsonify(enderecos_dict)
+    return render_template('enderecos.html', enderecos=enderecos)
