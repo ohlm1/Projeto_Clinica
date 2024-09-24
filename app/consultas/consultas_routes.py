@@ -1,9 +1,10 @@
 from flask import Blueprint, request, jsonify, render_template, redirect
 from datetime import datetime
-from registro_model import Paciente, Consulta
+from pacientes.registro_model import Paciente
+from .consultas_model import Consulta
 from __init__ import db
 
-consulta_blueprint = Blueprint('consulta', __name__)
+consulta_blueprint = Blueprint('consulta', __name__,template_folder='templates')
 
 @consulta_blueprint.route('/criar_consulta', methods=['GET'])
 def add_consulta_form():

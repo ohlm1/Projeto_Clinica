@@ -4,7 +4,136 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criar Consulta</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #e0f7fa, #80deea);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 700px;
+            padding: 2rem;
+            background: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #00796b;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.5rem;
+            line-height: 1.2;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        select,
+        input[type="datetime-local"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        select:focus,
+        input[type="datetime-local"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            border-color: #00796b;
+            box-shadow: 0 0 0.5rem rgba(0, 121, 107, 0.3);
+            outline: none;
+        }
+
+        button {
+            background-color: #00796b;
+            color: #ffffff;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 1.125rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        button:hover {
+            background-color: #004d40;
+            transform: scale(1.02);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        textarea::placeholder {
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.25rem;
+            }
+
+            select,
+            input[type="datetime-local"],
+            input[type="number"],
+            textarea {
+                font-size: 0.875rem;
+                padding: 0.625rem;
+            }
+
+            button {
+                font-size: 1rem;
+                padding: 0.625rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1rem;
+            }
+
+            select,
+            input[type="datetime-local"],
+            input[type="number"],
+            textarea {
+                font-size: 0.75rem;
+                padding: 0.5rem;
+            }
+
+            button {
+                font-size: 0.875rem;
+                padding: 0.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -12,7 +141,7 @@
         <form method="POST" action="/criar_consulta">
             <div class="form-group">
                 <label for="paciente_id">Paciente</label>
-                <select id="paciente_id" name="paciente_id" class="form-control" required>
+                <select id="paciente_id" name="paciente_id" required>
                     <option value="">Selecione um paciente</option>
                     {% for paciente in pacientes %}
                         <option value="{{ paciente.id }}">{{ paciente.nome }}</option>
@@ -21,18 +150,18 @@
             </div>
             <div class="form-group">
                 <label for="data_hora">Data e Hora</label>
-                <input type="datetime-local" id="data_hora" name="data_hora" class="form-control" required>
+                <input type="datetime-local" id="data_hora" name="data_hora" required>
             </div>
             <div class="form-group">
                 <label for="duracao">Duração (minutos)</label>
-                <input type="number" id="duracao" name="duracao" class="form-control" required>
+                <input type="number" id="duracao" name="duracao" required>
             </div>
             <div class="form-group">
                 <label for="observacoes">Observações</label>
-                <textarea id="observacoes" name="observacoes" class="form-control"></textarea>
+                <textarea id="observacoes" name="observacoes" placeholder="Observações adicionais..."></textarea>
             </div>
-            <button type="submit" class="btn btn-primary">Criar Consulta</button>
-            <a href="/listar_consultas" class="btn btn-secondary">Cancelar</a>
+            <button type="submit">Criar Consulta</button>
+            <a href="/listar_consultas" class="btn btn-secondary" style="display: inline-block; text-align: center; padding: 0.75rem; border-radius: 0.5rem; font-size: 1.125rem; background-color: #ccc; color: #333; text-decoration: none; margin-top: 1rem;">Cancelar</a>
         </form>
     </div>
 </body>
