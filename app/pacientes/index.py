@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, abort, render_template, redirect
 from datetime import datetime
-from .registro_model import Paciente, Endereco
+from pacientes.registro_model import Paciente, Endereco
 from __init__ import db
 
 paciente_blueprint = Blueprint('paciente', __name__)
