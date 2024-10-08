@@ -3,11 +3,17 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import {BrowserRoute, Route, Routes} from  'react-router-dom';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRoute>
+      <Routes>
+          <Route path= '/' element={<App/>}></Route>
+          <Route path='/cadastro_paciente' element></Route>
+      </Routes>
+    </BrowserRoute>
   </React.StrictMode>
 );
 
