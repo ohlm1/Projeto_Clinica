@@ -1,6 +1,8 @@
+import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import React, { useEffect, useState } from 'react';
+import RegistroPacientes from './components/RegistroPacientes';
+import ListaPacientes from './components/ListaPacientes'; // Importando o componente ListaPacientes
 
 function App() {
   return (
@@ -8,17 +10,13 @@ function App() {
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
-          Edit <code>src/App.js</code> and save to reload.
+          Bem-vindo ao sistema de gerenciamento de pacientes!
         </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
       </header>
+      <main>
+        <RegistroPacientes />
+        <ListaPacientes /> {/* Renderizando a lista de pacientes */}
+      </main>
     </div>
   );
 }
