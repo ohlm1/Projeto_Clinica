@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html>
 <head>
@@ -50,3 +51,57 @@
     </table>
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Listar Pacientes</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>Listar Pacientes</h1>
+    <table id="pacientes-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>Data de Nascimento</th>
+                <th>Telefone</th>
+                <th>Email</th>
+                <th>Endereço</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for paciente in pacientes %}
+            <tr>
+                <td>{{ paciente.id }}</td>
+                <td>{{ paciente.nome }}</td>
+                <td>{{ paciente.CPF }}</td>
+                <td>{{ paciente.data_nascimento.strftime('%d/%m/%Y') }}</td>  <!-- Formatação da data -->
+                <td>{{ paciente.telefone }}</td>
+                <td>{{ paciente.email }}</td>
+                <td>
+                    {% if paciente.endereco %}
+                        {{ paciente.endereco.logradouro }}, {{ paciente.endereco.linha_de_endereco1 }}, {{ paciente.endereco.numero }}
+                    {% else %}
+                        Nenhum endereço cadastrado
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
+>>>>>>> 7f58f00921a1ef6aa481319aadc1fc03ec25419e

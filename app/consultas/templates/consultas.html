@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -166,3 +167,173 @@
     </div>
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listar Consultas</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #e0f7fa, #80deea);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+            padding: 2rem;
+            background: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+
+        h1 {
+            color: #00796b;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.5rem;
+            line-height: 1.2;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        th, td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f1f1f1;
+            color: #555;
+            font-weight: 600;
+        }
+
+        .btn {
+            background-color: #00796b;
+            color: #ffffff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .btn:hover {
+            background-color: #004d40;
+            transform: scale(1.02);
+        }
+
+        .btn-danger {
+            background-color: #d32f2f;
+        }
+
+        .btn-danger:hover {
+            background-color: #b71c1c;
+        }
+
+        .btn-warning {
+            background-color: #f57c00;
+        }
+
+        .btn-warning:hover {
+            background-color: #ef6c00;
+        }
+
+        .mt-3 {
+            margin-top: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.25rem;
+            }
+
+            th, td {
+                font-size: 0.875rem;
+                padding: 0.5rem;
+            }
+
+            .btn {
+                font-size: 0.875rem;
+                padding: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1rem;
+            }
+
+            th, td {
+                font-size: 0.75rem;
+                padding: 0.25rem;
+            }
+
+            .btn {
+                font-size: 0.75rem;
+                padding: 0.25rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Listar Consultas</h1>
+        <a href="/criar_consulta" class="btn">Criar Nova Consulta</a>
+        <table class="table mt-3">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Paciente</th>
+                    <th>Data e Hora</th>
+                    <th>Duração (minutos)</th>
+                    <th>Observações</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for consulta in consultas %}
+                <tr>
+                    <td>{{ consulta.id }}</td>
+                    <td>{{ consulta.paciente.nome }}</td>
+                    <td>{{ consulta.data_hora }}</td>
+                    <td>{{ consulta.duracao }}</td>
+                    <td>{{ consulta.observacoes }}</td>
+                    <td>
+                        <a href="/atualizar_consulta/{{ consulta.id }}" class="btn btn-warning">Editar</a>
+                        <form action="/deletar_consulta/{{ consulta.id }}" method="POST" style="display:inline;">
+                            <input type="hidden" name="_method" value="DELETE">
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Tem certeza que deseja deletar esta consulta?')">Deletar</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+>>>>>>> 7f58f00921a1ef6aa481319aadc1fc03ec25419e
