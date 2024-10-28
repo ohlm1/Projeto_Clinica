@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atualizar Paciente</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #e0f7fa, #80deea);
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 700px;
+            padding: 2rem;
+            background: #ffffff;
+            border-radius: 1rem;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.2);
+            box-sizing: border-box;
+        }
+
+        h2 {
+            color: #00796b;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 1.5rem;
+            line-height: 1.2;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="email"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #00796b;
+            box-shadow: 0 0 0.5rem rgba(0, 121, 107, 0.3);
+            outline: none;
+        }
+
+        button {
+            background-color: #00796b;
+            color: #ffffff;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 1.125rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        button:hover {
+            background-color: #004d40;
+            transform: scale(1.02);
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #999;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            h2 {
+                font-size: 1.25rem;
+            }
+
+            input[type="text"],
+            input[type="date"],
+            input[type="email"],
+            input[type="tel"],
+            select,
+            textarea {
+                font-size: 0.875rem;
+                padding: 0.625rem;
+            }
+
+            button {
+                font-size: 1rem;
+                padding: 0.625rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h2 {
+                font-size: 1rem;
+            }
+
+            input[type="text"],
+            input[type="date"],
+            input[type="email"],
+            input[type="tel"],
+            select,
+            textarea {
+                font-size: 0.75rem;
+                padding: 0.5rem;
+            }
+
+            button {
+                font-size: 0.875rem;
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Atualizar Paciente</h2>
+        <form action="/atualizar_paciente/{{ paciente.id }}" method="POST">
+            <label for="nome">Nome Completo:</label>
+            <input type="text" id="nome" name="nome" value="{{ paciente.nome }}" required>
+
+            <label for="data_nascimento">Data de Nascimento:</label>
+            <input type="date" id="data_nascimento" name="data_nascimento" value="{{ paciente.data_nascimento }}" required>
+
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" name="email" value="{{ paciente.email }}" required>
+
+            <label for="telefone">Telefone:</label>
+            <input type="tel" id="telefone" name="telefone" value="{{ paciente.telefone }}" required>
+
+            <label for="CPF">CPF:</label>
+            <input type="text" id="CPF" name="CPF" value="{{ paciente.CPF }}" required>
+
+            <label for="logradouro">Logradouro:</label>
+            <input type="text" id="logradouro" name="logradouro" value="{{ paciente.endereco.logradouro }}" required>
+
+            <label for="linha_de_endereco1">Linha de Endereço 1:</label>
+            <input type="text" id="linha_de_endereco1" name="linha_de_endereco1" value="{{ paciente.endereco.linha_de_endereco1 }}" required>
+
+            <label for="numero">Número:</label>
+            <input type="text" id="numero" name="numero" value="{{ paciente.endereco.numero }}" required>
+
+            <button type="submit">Atualizar Paciente</button>
+        </form>
+    </div>
+
+</body>
+</html>
