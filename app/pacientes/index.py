@@ -73,7 +73,7 @@ def atualizar_paciente(id):
     else:
         return jsonify({"error": "Paciente não encontrado"}), 404
 
-@paciente_blueprint.route('/api/paciente/<int:id>', methods=['DELETE'])
+@paciente_blueprint.route('/api/delete_paciente/<int:id>', methods=['DELETE'])
 def deletar_paciente(id):
     paciente = Paciente.deletar_paciente_por_id(id)
     if paciente:

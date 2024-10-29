@@ -1,25 +1,18 @@
 import React, { useEffect, useState } from 'react';
-<<<<<<< HEAD
-
-const ListaPacientes = () => {
-    const [pacientes, setPacientes] = useState([]);
-=======
-import { useNavigate } from 'react-router-dom'; // Atualizando a importação para useNavigate
+import { useNavigate } from 'react-router-dom';
 import './ListaPacientes.css';
 
 const ListaPacientes = () => {
     const [pacientes, setPacientes] = useState([]);
-    const navigate = useNavigate(); // Usando useNavigate
->>>>>>> 7f58f00921a1ef6aa481319aadc1fc03ec25419e
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPacientes = async () => {
+            setLoading(true);
             try {
-<<<<<<< HEAD
-                const response = await fetch('/listar_pacientes');
-=======
                 const response = await fetch('http://localhost:5000/api/pacientes');
->>>>>>> 7f58f00921a1ef6aa481319aadc1fc03ec25419e
                 if (!response.ok) {
                     throw new Error('Erro ao buscar pacientes');
                 }
@@ -27,32 +20,50 @@ const ListaPacientes = () => {
                 setPacientes(data);
             } catch (error) {
                 console.error(error);
+                setError('Erro ao buscar pacientes. Tente novamente mais tarde.');
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchPacientes();
     }, []);
 
-<<<<<<< HEAD
-    return (
-        <div>
-            <h1>Listar Pacientes</h1>
-=======
     const handleEdit = (id) => {
-        // Redireciona para a página de edição do paciente
-        navigate(`/atualizar-paciente/${id}`); // Usando navigate para redirecionar
+        navigate(`/atualizar-paciente/${id}`);
     };
 
+    const handleDelete = async (id) => {
+        const confirmDelete = window.confirm('Tem certeza que deseja deletar este paciente?');
+    
+        if (!confirmDelete) return; // Sai da função se não confirmar
+    
+        try {
+            const response = await fetch(`http://localhost:5000/api/delete_paciente/${id}`, { method: 'DELETE' });
+    
+            if (!response.ok) {
+                const errorMessage = await response.text(); // Captura a mensagem de erro do servidor
+                throw new Error(errorMessage || 'Erro ao deletar paciente');
+            }
+    
+            setPacientes(prevPacientes => prevPacientes.filter(paciente => paciente.id !== id));
+        } catch (error) {
+            console.error(error);
+            alert(`Ocorreu um erro ao deletar o paciente: ${error.message}`);
+        }
+    };
+    
+    
     const handleRegister = () => {
-        // Redireciona para a página de cadastro de paciente
-        navigate('/cadastro_paciente'); // Usando navigate para redirecionar
+        navigate('/cadastro_paciente');
     };
 
     return (
         <div>
             <h1>Listar Pacientes</h1>
-            <button onClick={handleRegister}>Cadastrar Paciente</button> {/* Botão para cadastrar paciente */}
->>>>>>> 7f58f00921a1ef6aa481319aadc1fc03ec25419e
+            <button onClick={handleRegister}>Cadastrar Paciente</button>
+            {loading && <p>Loading...</p>}
+            {error && <p style={{ color: 'red' }}>{error}</p>}
             <table id="pacientes-table">
                 <thead>
                     <tr>
@@ -63,10 +74,7 @@ const ListaPacientes = () => {
                         <th>Telefone</th>
                         <th>Email</th>
                         <th>Endereço</th>
-<<<<<<< HEAD
-=======
-                        <th>Ações</th> {/* Coluna para ações */}
->>>>>>> 7f58f00921a1ef6aa481319aadc1fc03ec25419e
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -85,13 +93,10 @@ const ListaPacientes = () => {
                                     'Nenhum endereço cadastrado'
                                 )}
                             </td>
-<<<<<<< HEAD
-=======
                             <td>
                                 <button onClick={() => handleEdit(paciente.id)}>Editar</button>
-                                
+                                <button onClick={() => handleDelete(paciente.id)}>Deletar</button>
                             </td>
->>>>>>> 7f58f00921a1ef6aa481319aadc1fc03ec25419e
                         </tr>
                     ))}
                 </tbody>
