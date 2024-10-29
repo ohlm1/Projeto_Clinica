@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Projeto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        header {
+            background: #333;
+            color: #fff;
+            padding: 3px 0;
+            text-align: center;
+        }
+        nav {
+            margin: 5px 0;
+        }
+        nav a {
+            margin: 0 15px;
+            color: #28a745; /* Cor verde */
+            text-decoration: none;
+        }
+        nav a:hover {
+            text-decoration: underline; /* Sublinhado ao passar o mouse */
+        }
+        main {
+            padding: 20px;
+            text-align: center;
+        }
+        h2 {
+            color: #28a745; /* Cor para os títulos */
+        }
+        p {
+            color: #333; /* Cor do texto padrão */
+        }
+        .botao-redondo {
+            background-color: #28a745; /* Cor de fundo */
+            color: white; /* Cor do texto */
+            border: none; /* Sem borda */
+            border-radius: 15px; /* Borda arredondada */
+            width: 120px; /* Largura do botão */
+            height: 40px; /* Altura do botão */
+            cursor: pointer; /* Cursor ao passsar o mouse */
+            font-size: 16px; /* Tamanho da fonte */
+            margin-top: 20px; /* Margem superior */
+            transition: background-color 0.3s; /* Transição para a cor de fundo */
+        }
+        .botao-redondo:hover {
+            background-color: #218838; /* Cor do botão ao passar o mouse */
+        }
+        footer {
+            background: #333;
+            color: #fff;
+            text-align: center;
+            padding: 3px 0; 
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Projeto Clínica</h1>
+        <nav>
+            <a href="#sobre">Sobre</a>
+            <a href="#servicos">Serviços</a>
+            <a href="#contato">Contato</a>
+        </nav>
+    </header>
+
+    <main>
+        <section id="sobre">
+            <h2>Sobre Nós</h2>
+            <p>Projeto de uma clínica de fisioterapia.</p>
+        </section>
+
+        <section id="servicos">
+            <h2>Serviços</h2>
+            <p>Oferecemos diversos serviços para atender suas necessidades.</p>
+        </section>
+
+        <section id="contato">
+            <h2>Contato</h2>
+            <p>Entre em contato conosco através do e-mail: contato@meuprojeto.com</p>
+        </section>
+
+        <button class="botao-redondo">TESTE</button>
+    </main>
+
+    <footer>
+        <p>&copy; 2024. Todos os direitos reservados.</p>
+    </footer>
+</body>
+</html>
