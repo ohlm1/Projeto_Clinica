@@ -22,15 +22,28 @@
         }
         nav a {
             margin: 0 15px;
-            color: #28a745; /* Cor verde */
+            color: #28a745; 
             text-decoration: none;
         }
         nav a:hover {
             text-decoration: underline; /* Sublinhado ao passar o mouse */
         }
         main {
+            display: flex; /* Utilizando flexbox */
+            flex-direction: column; /* Colocando as seções em coluna */
+            align-items: center; /* Centralizando horizontalmente */
             padding: 20px;
-            text-align: center;
+        }
+        section {
+            max-width: 600px; /* Largura máxima para as seções */
+            height: 200px; /* Altura ajustada para ser mais retangular */
+            margin-bottom: 20px; /* Espaçamento entre as seções */
+            text-align: center; /* Centralizando o texto dentro das seções */
+            background: white; /* Fundo branco para as seções */
+            padding: 15px; /* Espaçamento interno reduzido */
+            border-radius: 10px; /* Borda arredondada */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Sombra para as seções */
+            box-sizing: border-box; /* Incluindo padding e borda nas dimensões */
         }
         h2 {
             color: #28a745; /* Cor para os títulos */
@@ -45,7 +58,7 @@
             border-radius: 15px; /* Borda arredondada */
             width: 120px; /* Largura do botão */
             height: 40px; /* Altura do botão */
-            cursor: pointer; /* Cursor ao passsar o mouse */
+            cursor: pointer; /* Cursor ao passar o mouse */
             font-size: 16px; /* Tamanho da fonte */
             margin-top: 20px; /* Margem superior */
             transition: background-color 0.3s; /* Transição para a cor de fundo */
@@ -53,12 +66,17 @@
         .botao-redondo:hover {
             background-color: #218838; /* Cor do botão ao passar o mouse */
         }
+        .lista-pacientes {
+            margin-top: 20px;
+            text-align: left;
+            display: none; 
+        }
         footer {
             background: #333;
-            color: #fff;
+            color: #fff; 
             text-align: center;
-            padding: 3px 0; 
-            position: fixed;
+            padding: 10px 0; 
+            position: relative; 
             width: 100%;
             bottom: 0;
         }
@@ -83,18 +101,27 @@
         <section id="servicos">
             <h2>Serviços</h2>
             <p>Oferecemos diversos serviços para atender suas necessidades.</p>
+            <button class="botao-redondo" onclick="listarPacientes()">Listar Pacientes</button>
+            <div class="lista-pacientes" id="lista-pacientes">
+
+            </div>
         </section>
 
         <section id="contato">
             <h2>Contato</h2>
             <p>Entre em contato conosco através do e-mail: contato@meuprojeto.com</p>
         </section>
-
-        <button class="botao-redondo">TESTE</button>
     </main>
 
     <footer>
         <p>&copy; 2024. Todos os direitos reservados.</p>
     </footer>
+
+    <script>
+        function listarPacientes() {
+            const listaPacientes = document.getElementById('lista-pacientes');
+            listaPacientes.style.display = listaPacientes.style.display === 'none' ? 'block' : 'none';
+        }
+    </script>
 </body>
 </html>
