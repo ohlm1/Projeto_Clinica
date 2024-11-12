@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './formStyles.css'; // Adicionando o CSS de estilo
 
 const CriarConsulta = () => {
   const [formData, setFormData] = useState({
@@ -8,17 +9,23 @@ const CriarConsulta = () => {
     duracao: '',
     observacoes: '',
   });
-  const [pacientes, setPacientes] = useState([]); // Lista de pacientes
-  const [isLoading, setIsLoading] = useState(false); // Estado para controle de carregamento
-  const [errorMessage, setErrorMessage] = useState(''); // Mensagem de erro
+  const [pacientes, setPacientes] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
 
-  // Carregar a lista de pacientes (opcional, se necessário)
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/listar_pacientes')  // Alterar para o endpoint correto
-      .then((response) => response.json())
+    setIsLoading(true);
+    fetch('http://127.0.0.1:5000/api/pacientes')
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error('Erro ao carregar lista de pacientes');
+      })
       .then((data) => setPacientes(data))
-      .catch((error) => setErrorMessage('Erro ao carregar a lista de pacientes.'));
+      .catch(() => setErrorMessage('Erro ao carregar lista de pacientes'))
+      .finally(() => setIsLoading(false));
   }, []);
 
   const handleChange = (e) => {
@@ -29,47 +36,49 @@ const CriarConsulta = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    // Validação de dados antes de enviar
+  
+    // Validate the form
     if (!formData.paciente_id || !formData.data_hora || !formData.duracao) {
       setErrorMessage('Todos os campos são obrigatórios!');
       return;
     }
-
-    setIsLoading(true); // Ativa o carregamento
-
-    fetch('http://127.0.0.1:5000/criar_consulta', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
-    })
-      .then((response) => {
-        if (response.ok) {
-          navigate('/'); // Navega de volta para a lista de consultas
-        } else {
-          setErrorMessage('Erro ao criar consulta');
-        }
-      })
-      .catch((error) => {
-        setErrorMessage('Erro ao criar consulta');
-      })
-      .finally(() => {
-        setIsLoading(false); // Desativa o carregamento
+  
+    setIsLoading(true);
+  
+    try {
+      const response = await fetch('http://127.0.0.1:5000/criar_consulta', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
+  
+      if (response.ok) {
+        // On success, navigate to consultas page
+        navigate('/consultas');
+      } else {
+        const data = await response.json();
+        setErrorMessage(data.message || 'Erro ao criar consulta');
+      }
+    } catch (error) {
+      setErrorMessage('Erro ao criar consulta');
+    } finally {
+      setIsLoading(false);
+    }
   };
+  
 
   return (
-    <div>
+    <div className="form-container">
       <h1>Criar Nova Consulta</h1>
+
+      {errorMessage && <div style={{ color: 'red', marginBottom: '15px' }}>{errorMessage}</div>}
+
       <form onSubmit={handleSubmit}>
-        {/* Exibição de erro */}
-        {errorMessage && <div style={{ color: 'red' }}>{errorMessage}</div>}
-        
-        <div>
+        <div className="form-group">
           <label>Paciente:</label>
           <select
             name="paciente_id"
@@ -84,8 +93,8 @@ const CriarConsulta = () => {
             ))}
           </select>
         </div>
-        
-        <div>
+
+        <div className="form-group">
           <label>Data e Hora:</label>
           <input
             type="datetime-local"
@@ -94,8 +103,8 @@ const CriarConsulta = () => {
             onChange={handleChange}
           />
         </div>
-        
-        <div>
+
+        <div className="form-group">
           <label>Duração (minutos):</label>
           <input
             type="number"
@@ -104,8 +113,8 @@ const CriarConsulta = () => {
             onChange={handleChange}
           />
         </div>
-        
-        <div>
+
+        <div className="form-group">
           <label>Observações:</label>
           <textarea
             name="observacoes"
@@ -114,9 +123,11 @@ const CriarConsulta = () => {
           />
         </div>
 
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Criando...' : 'Criar Consulta'}
-        </button>
+        <div className="button-container">
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? 'Criando...' : 'Criar Consulta'}
+          </button>
+        </div>
       </form>
     </div>
   );

@@ -24,7 +24,7 @@ root.render(
         <Route path='*' element={<NotFound />} />
         <Route path='/1234' element={<HomePage />} />
         <Route path='/consultas' element={<ListaConsulta />} />
-        <Route path='/consultas-att' element={<AtualizarConsulta />} />
+        <Route path='/atualizar_consulta/:id' element={<AtualizarConsulta />} />
         <Route path='/criar_consulta' element={<CriarConsulta />} />
       </Routes>
     </BrowserRouter>
