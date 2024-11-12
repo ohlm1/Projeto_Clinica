@@ -35,25 +35,24 @@ const ListaPacientes = () => {
 
     const handleDelete = async (id) => {
         const confirmDelete = window.confirm('Tem certeza que deseja deletar este paciente?');
-    
-        if (!confirmDelete) return; // Sai da função se não confirmar
-    
+        if (!confirmDelete) return;  // Exit if not confirmed
+
         try {
             const response = await fetch(`http://localhost:5000/api/delete_paciente/${id}`, { method: 'DELETE' });
-    
+
             if (!response.ok) {
-                const errorMessage = await response.text(); // Captura a mensagem de erro do servidor
+                const errorMessage = await response.text();
                 throw new Error(errorMessage || 'Erro ao deletar paciente');
             }
-    
-            setPacientes(prevPacientes => prevPacientes.filter(paciente => paciente.id !== id));
+
+            // Remove the deleted patient from the state
+            setPacientes(prev => prev.filter(p => p.id !== id));
         } catch (error) {
-            console.error(error);
+            console.error('Error during fetch:', error);  // Log the error
             alert(`Ocorreu um erro ao deletar o paciente: ${error.message}`);
         }
     };
-    
-    
+
     const handleRegister = () => {
         navigate('/cadastro_paciente');
     };
@@ -90,7 +89,7 @@ const ListaPacientes = () => {
                                 {paciente.endereco ? (
                                     `${paciente.endereco.logradouro}, ${paciente.endereco.linha_de_endereco1}, ${paciente.endereco.numero}`
                                 ) : (
-                                    'Nenhum endereço cadastrado'
+                                    'Endereço não disponível'
                                 )}
                             </td>
                             <td>

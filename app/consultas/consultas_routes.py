@@ -1,82 +1,129 @@
-from flask import Blueprint, request, jsonify, render_template, redirect
+from flask import Blueprint, request, jsonify
 from datetime import datetime
 from pacientes.registro_model import Paciente
 from .consultas_model import Consulta
 from __init__ import db
 
-consulta_blueprint = Blueprint('consulta', __name__,template_folder='templates')
+consulta_blueprint = Blueprint('consulta', __name__)
 
-@consulta_blueprint.route('/criar_consulta', methods=['GET'])
-def add_consulta_form():
-    pacientes = Paciente.listar_pacientes()  # Lista de pacientes para seleção
-    return render_template('criar_consulta.html', pacientes=pacientes)
+# Helper function to check if the patient exists
+def get_paciente_by_id(paciente_id):
+    paciente = Paciente.query.get(paciente_id)
+    if not paciente:
+        raise ValueError('Paciente não encontrado')
+    return paciente
 
+# Create a new consulta (POST request)
 @consulta_blueprint.route('/criar_consulta', methods=['POST'])
 def criar_consulta():
-    form_data = request.form
+    try:
+        form_data = request.json  # Expecting JSON data
+        
+        # Verificar se o paciente existe
+        paciente_id = form_data.get('paciente_id')
+        if not paciente_id:
+            return jsonify({'error': 'ID do paciente é necessário'}), 400
+        
+        paciente = get_paciente_by_id(paciente_id)
 
-    # Convertendo a data e hora da consulta para o formato correto
-    data_hora_str = form_data['data_hora']
-    data_hora = datetime.strptime(data_hora_str, '%Y-%m-%dT%H:%M')  # Ajuste o formato conforme necessário
+        # Processar a data e hora
+        data_hora_str = form_data.get('data_hora')
+        if not data_hora_str:
+            return jsonify({'error': 'Data e hora são necessárias'}), 400
+        
+        data_hora = datetime.strptime(data_hora_str, '%Y-%m-%dT%H:%M')
 
-    # Criando a consulta
-    consulta = Consulta(
-        paciente_id=form_data['paciente_id'],
-        data_hora=data_hora,
-        duracao=form_data['duracao'],
-        observacoes=form_data.get('observacoes')  # Campo opcional
-    )
-    db.session.add(consulta)
-    db.session.commit()
+        # Criar a consulta
+        consulta = Consulta(
+            paciente_id=paciente_id,
+            data_hora=data_hora,
+            duracao=form_data.get('duracao'),
+            observacoes=form_data.get('observacoes')
+        )
+        
+        db.session.add(consulta)
+        db.session.commit()
 
-    return redirect('/listar_consultas')
+        return jsonify({'message': 'Consulta criada com sucesso!'}), 201
 
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 404
+    except Exception as e:
+        return jsonify({'error': 'Erro inesperado ao criar consulta', 'message': str(e)}), 500
+
+
+# List all consultas (GET request)
 @consulta_blueprint.route('/listar_consultas', methods=['GET'])
 def listar_consultas():
-    consultas = Consulta.listar_consultas()
-    return render_template('consultas.html', consultas=consultas)
+    try:
+        consultas = Consulta.query.all()  # Alterado para usar o método correto do SQLAlchemy
+        return jsonify([consulta.to_dict() for consulta in consultas])
 
+    except Exception as e:
+        return jsonify({'error': 'Erro inesperado ao listar consultas', 'message': str(e)}), 500
+
+
+# Get a specific consulta by ID (GET request)
 @consulta_blueprint.route('/buscar_consulta/<int:id>', methods=['GET'])
 def buscar_consulta(id):
-    consulta = Consulta.buscar_consulta(id)
-    if consulta:
-        return jsonify(consulta.to_dict())
-    else:
-        return jsonify({"error": "Consulta não encontrada"}), 404
+    try:
+        consulta = Consulta.query.get(id)
+        if consulta:
+            return jsonify(consulta.to_dict())
+        else:
+            return jsonify({"error": "Consulta não encontrada"}), 404
+    except Exception as e:
+        return jsonify({'error': 'Erro inesperado ao buscar consulta', 'message': str(e)}), 500
 
-@consulta_blueprint.route('/atualizar_consulta/<int:id>', methods=['GET'])
-def atualizar_consulta_form(id):
-    consulta = Consulta.buscar_consulta(id)
-    if consulta:
-        pacientes = Paciente.listar_pacientes()  # Lista de pacientes para seleção
-        return render_template('atualizar_consulta.html', consulta=consulta, pacientes=pacientes)
-    else:
-        return jsonify({"error": "Consulta não encontrada"}), 404
 
-@consulta_blueprint.route('/atualizar_consulta/<int:id>', methods=['POST'])
+# Update a consulta (PUT request)
+@consulta_blueprint.route('/atualizar_consulta/<int:id>', methods=['PUT'])
 def atualizar_consulta(id):
-    consulta = Consulta.buscar_consulta(id)
-    if consulta:
-        form_data = request.form
-
-        # Convertendo a data e hora da consulta para o formato correto
-        data_hora_str = form_data['data_hora']
-        data_hora = datetime.strptime(data_hora_str, '%Y-%m-%dT%H:%M')  # Ajuste o formato conforme necessário
+    try:
+        consulta = Consulta.query.get(id)
+        if not consulta:
+            return jsonify({"error": "Consulta não encontrada"}), 404
         
-        # Atualizando os dados da consulta
+        form_data = request.json
+        
+        paciente_id = form_data.get('paciente_id')
+        if not paciente_id:
+            return jsonify({'error': 'ID do paciente é necessário'}), 400
+        
+        paciente = get_paciente_by_id(paciente_id)
+
+        # Processar a data e hora
+        data_hora_str = form_data.get('data_hora')
+        if not data_hora_str:
+            return jsonify({'error': 'Data e hora são necessárias'}), 400
+        
+        data_hora = datetime.strptime(data_hora_str, '%Y-%m-%dT%H:%M')
+
+        consulta.paciente_id = paciente_id
         consulta.data_hora = data_hora
-        consulta.duracao = form_data['duracao']
-        consulta.observacoes = form_data.get('observacoes')  # Campo opcional
-        
-        db.session.commit()
-        return redirect('/listar_consultas')
-    else:
-        return jsonify({"error": "Consulta não encontrada"}), 404
+        consulta.duracao = form_data.get('duracao')
+        consulta.observacoes = form_data.get('observacoes')
 
-@consulta_blueprint.route('/deletar_consulta/<int:id>', methods=['POST'])
+        db.session.commit()
+        return jsonify({'message': 'Consulta atualizada com sucesso!'}), 200
+
+    except ValueError as e:
+        return jsonify({'error': str(e)}), 404
+    except Exception as e:
+        return jsonify({'error': 'Erro inesperado ao atualizar consulta', 'message': str(e)}), 500
+
+
+# Delete a consulta (DELETE request)
+@consulta_blueprint.route('/deletar_consulta/<int:id>', methods=['DELETE'])
 def deletar_consulta(id):
-    consulta = Consulta.deletar_consulta_por_id(id)
-    if consulta:
-        return redirect('/listar_consultas')
-    else:
-        return jsonify({"error": "Consulta não encontrada"}), 404
+    try:
+        consulta = Consulta.query.get(id)
+        if consulta:
+            db.session.delete(consulta)
+            db.session.commit()
+            return jsonify({'message': 'Consulta deletada com sucesso!'}), 200
+        else:
+            return jsonify({"error": "Consulta não encontrada"}), 404
+
+    except Exception as e:
+        return jsonify({'error': 'Erro inesperado ao deletar consulta', 'message': str(e)}), 500

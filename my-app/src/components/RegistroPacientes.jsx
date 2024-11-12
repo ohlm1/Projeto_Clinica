@@ -48,7 +48,7 @@ const RegistroPacientes = () => {
                     linha_de_endereco1: '',
                     numero: '',
                 });
-                navigate('/'); // Redireciona para a lista de pacientes após o registro
+                navigate('/pacientes'); // Redireciona para a lista de pacientes após o registro
             } else {
                 const errorData = await response.json();
                 setErrorMessage(`Erro ao registrar paciente: ${errorData.message || 'Erro desconhecido'}`);

@@ -9,6 +9,9 @@ import ListaPacientes from './components/ListaPacientes';
 import NotFound from './components/NotFound';
 import AtualizarPaciente from './components/AtualizarPaciente';
 import HomePage from './components/hPage';
+import ListaConsulta from './components/ListaConsulta';
+import AtualizarConsulta from './components/AtualizarConsulta';
+import CriarConsulta from './components/Criar_Consulta';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -19,7 +22,10 @@ root.render(
         <Route path='/cadastro_paciente' element={<RegistroPacientes />} />
         <Route path='/atualizar-paciente/:id' element={<AtualizarPaciente />} />
         <Route path='*' element={<NotFound />} />
-        <Route path='/' element={<HomePage />} />
+        <Route path='/1234' element={<HomePage />} />
+        <Route path='/consultas' element={<ListaConsulta />} />
+        <Route path='/consultas-att' element={<AtualizarConsulta />} />
+        <Route path='/criar_consulta' element={<CriarConsulta />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

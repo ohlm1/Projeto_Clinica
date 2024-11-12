@@ -75,11 +75,16 @@ def atualizar_paciente(id):
 
 @paciente_blueprint.route('/api/delete_paciente/<int:id>', methods=['DELETE'])
 def deletar_paciente(id):
-    paciente = Paciente.deletar_paciente_por_id(id)
-    if paciente:
-        return jsonify({"message": "Paciente deletado com sucesso"})
-    else:
-        return jsonify({"error": "Paciente não encontrado"}), 404
+    try:
+        paciente = Paciente.deletar_paciente_por_id(id)
+        if paciente:
+            return jsonify({"message": "Paciente deletado com sucesso"})
+        else:
+            return jsonify({"error": "Paciente não encontrado"}), 404
+    except Exception as e:
+        # Log error for debugging
+        print(f"Erro ao deletar paciente: {e}")
+        return jsonify({"error": "Erro interno ao deletar paciente"}), 500
 
 @paciente_blueprint.route('/api/endereco/<int:id>', methods=['GET'])
 def buscar_endereco(id):

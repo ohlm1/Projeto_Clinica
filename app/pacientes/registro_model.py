@@ -55,15 +55,15 @@ class Paciente(db.Model):
     telefone = db.Column(db.String(20), nullable=False)
     email = db.Column(db.String(100), nullable=False)
     endereco_id = db.Column(db.Integer, db.ForeignKey('endereco.id'))
-    endereco = db.relationship('Endereco', backref=db.backref('paciente', uselist=False))
-    data_nascimento = db.Column(db.Date, nullable=True)  # Adicionando o campo de data de nascimento
+    endereco = db.relationship('Endereco', backref=db.backref('paciente', uselist=False), cascade="all, delete")  # Cascade delete
+    data_nascimento = db.Column(db.Date, nullable=True)
 
     def __init__(self, nome, CPF, telefone, email, data_nascimento, endereco_id=None):
         self.nome = nome
         self.CPF = CPF
         self.telefone = telefone
         self.email = email
-        self.data_nascimento = data_nascimento  # Inicializando o novo atributo
+        self.data_nascimento = data_nascimento
         self.endereco_id = endereco_id
 
     def to_dict(self):
@@ -73,7 +73,7 @@ class Paciente(db.Model):
             "CPF": self.CPF,
             "telefone": self.telefone,
             "email": self.email,
-            "data_nascimento": self.data_nascimento.isoformat() if self.data_nascimento else None,  # Convertendo para formato ISO
+            "data_nascimento": self.data_nascimento.isoformat() if self.data_nascimento else None,  # Convert to ISO format
             "endereco": self.endereco.to_dict() if self.endereco else None
         }
 
@@ -100,7 +100,7 @@ class Paciente(db.Model):
         self.CPF = CPF
         self.telefone = telefone
         self.email = email
-        self.data_nascimento = data_nascimento  # Atualizando a data de nascimento
+        self.data_nascimento = data_nascimento
         db.session.commit()
 
     def deletar_paciente(self):
@@ -111,8 +111,13 @@ class Paciente(db.Model):
     def deletar_paciente_por_id(cls, id):
         paciente = cls.buscar_paciente(id)
         if paciente:
-            db.session.delete(paciente)
-            db.session.commit()
+            try:
+                db.session.delete(paciente)
+                db.session.commit()
+                return paciente
+            except Exception as e:
+                db.session.rollback()  # Rollback in case of error
+                raise Exception(f"Erro ao deletar paciente: {str(e)}")
         else:
             raise Exception(f"Paciente com ID {id} não encontrado.")
 
