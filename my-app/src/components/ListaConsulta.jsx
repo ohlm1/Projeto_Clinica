@@ -1,31 +1,61 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import './Consultas.css'
+import './Consultas.css';
 
 const ConsultasList = () => {
   const [consultas, setConsultas] = useState([]);
+  const [pacientes, setPacientes] = useState({});
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(true); // Estado para controle de carregamento
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch consultations from the Flask API
+  // Fetch consultas da API
   useEffect(() => {
-    fetch('http://127.0.0.1:5000/listar_consultas')  // URL da API
+    fetch('http://127.0.0.1:5000/listar_consultas') // URL da API
       .then((response) => response.json())
       .then((data) => {
         setConsultas(data);
-        setIsLoading(false); // Definir loading como false após os dados serem carregados
+        // Agora, buscar os pacientes de todos os IDs que aparecerem nas consultas
+        const pacienteIds = data.map(consulta => consulta.paciente_id);
+        fetchPacientes(pacienteIds);
       })
-      .catch((error) => {
+      .catch(() => {
         setErrorMessage('Erro ao carregar as consultas.');
-        setIsLoading(false); // Mesmo em erro, desativa o loading
+        setIsLoading(false);
       });
   }, []);
 
-  // Handle deletion
+  // Buscar pacientes pelo ID
+  const fetchPacientes = (pacienteIds) => {
+    const uniqueIds = [...new Set(pacienteIds)];
+
+    // Carregar pacientes com base nos IDs
+    Promise.all(uniqueIds.map(id =>
+      fetch(`http://127.0.0.1:5000/api/paciente/${id}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setPacientes((prev) => ({
+            ...prev,
+            [data.id]: data, // Armazena o paciente pelo ID
+          }));
+        })
+        .catch(() => {
+          setErrorMessage('Erro ao carregar os pacientes.');
+        })
+    ))
+    .finally(() => setIsLoading(false));
+  };
+
+  // Função para formatar a data
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('pt-BR'); // Formato de data em pt-BR
+  };
+
+  // Função para excluir consulta
   const handleDelete = (id) => {
     if (window.confirm('Tem certeza que deseja deletar esta consulta?')) {
-      setIsLoading(true); // Ativa o carregamento durante a exclusão
+      setIsLoading(true); // Ativa o carregamento enquanto a consulta está sendo deletada
 
       fetch(`http://127.0.0.1:5000/deletar_consulta/${id}`, {
         method: 'DELETE',
@@ -45,12 +75,6 @@ const ConsultasList = () => {
           setIsLoading(false); // Desativa o carregamento em caso de erro
         });
     }
-  };
-
-  // Função para formatar a data
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleString('pt-BR'); // Formato de data em pt-BR
   };
 
   return (
@@ -87,14 +111,17 @@ const ConsultasList = () => {
               consultas.map((consulta) => (
                 <tr key={consulta.id}>
                   <td>{consulta.id}</td>
-                  <td>{consulta.paciente ? consulta.paciente.nome : 'Desconhecido'}</td>
+                  <td>
+                    {pacientes[consulta.paciente_id] ? 
+                      pacientes[consulta.paciente_id].nome : 'Carregando...'}
+                  </td>
                   <td>{formatDate(consulta.data_hora)}</td>
                   <td>{consulta.duracao}</td>
                   <td>{consulta.observacoes}</td>
                   <td>
                     <Link to={`/atualizar_consulta/${consulta.id}`}>Editar</Link>
-                    <button 
-                      onClick={() => handleDelete(consulta.id)} 
+                    <button
+                      onClick={() => handleDelete(consulta.id)}
                       disabled={isLoading} // Desabilita o botão enquanto a operação está em andamento
                     >
                       {isLoading ? 'Deletando...' : 'Deletar'}

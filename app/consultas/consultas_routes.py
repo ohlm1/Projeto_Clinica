@@ -34,7 +34,6 @@ def criar_consulta():
 
         duracao = form_data.get('duracao')
 
-
         # Criar a consulta
         consulta = Consulta(
             paciente_id=paciente_id,
@@ -46,7 +45,7 @@ def criar_consulta():
         db.session.add(consulta)
         db.session.commit()
 
-        return jsonify({'message': 'Consulta criada com sucesso!'}), 201
+        return jsonify({'message': 'Consulta criada com sucesso!', 'consulta': consulta.to_dict(), 'paciente': paciente.to_dict()}), 201
 
     except ValueError as e:
         return jsonify({'error': str(e)}), 404
@@ -74,7 +73,8 @@ def buscar_consulta(id):
     try:
         consulta = Consulta.query.get(id)
         if consulta:
-            return jsonify(consulta.to_dict())
+            paciente = Paciente.query.get(consulta.paciente_id)  # Retorna os dados do paciente associado
+            return jsonify({'consulta': consulta.to_dict(), 'paciente': paciente.to_dict()})
         else:
             return jsonify({"error": "Consulta não encontrada"}), 404
     except Exception as e:
@@ -103,8 +103,6 @@ def atualizar_consulta(id):
         data_hora = datetime.strptime(data_hora_str, '%Y-%m-%dT%H:%M')
 
         duracao = form_data.get('duracao')
-        if duracao is None or not isinstance(duracao, int):
-            return jsonify({'error': 'Duração inválida'}), 400
 
         consulta.paciente_id = paciente_id
         consulta.data_hora = data_hora
@@ -112,7 +110,9 @@ def atualizar_consulta(id):
         consulta.observacoes = form_data.get('observacoes')
 
         db.session.commit()
-        return jsonify({'message': 'Consulta atualizada com sucesso!'}), 200
+
+        paciente = Paciente.query.get(paciente_id)  # Retorna o paciente atualizado
+        return jsonify({'message': 'Consulta atualizada com sucesso!', 'consulta': consulta.to_dict(), 'paciente': paciente.to_dict()}), 200
 
     except ValueError as e:
         return jsonify({'error': str(e)}), 404

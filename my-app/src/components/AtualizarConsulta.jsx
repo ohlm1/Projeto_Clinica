@@ -5,10 +5,12 @@ import './formStyles.css';
 const AtualizarConsulta = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [consulta, setConsulta] = useState(null);
+  const [consulta, setConsulta] = useState(null); // Para armazenar os dados da consulta
   const [errorMessage, setErrorMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(true); // Para exibir o carregamento
 
   useEffect(() => {
+    // Carregar a consulta
     fetch(`http://127.0.0.1:5000/buscar_consulta/${id}`)
       .then((response) => {
         if (!response.ok) {
@@ -17,10 +19,13 @@ const AtualizarConsulta = () => {
         return response.json();
       })
       .then((data) => {
-        data.data_hora = data.data_hora.slice(0, 16);
+        data.data_hora = data.data_hora.slice(0, 16); // Ajuste de formato de data
         setConsulta(data);
       })
-      .catch((error) => setErrorMessage(error.message));
+      .catch((error) => {
+        setErrorMessage(error.message);
+      })
+      .finally(() => setIsLoading(false)); // Certifique-se de que o loading seja removido
   }, [id]);
 
   const handleChange = (e) => {
@@ -45,12 +50,16 @@ const AtualizarConsulta = () => {
         if (!response.ok) {
           throw new Error('Erro ao atualizar consulta');
         }
+        return response.json();
+      })
+      .then(() => {
         navigate('/consultas');
       })
       .catch((error) => setErrorMessage(error.message));
   };
 
-  if (!consulta) return <div>Carregando...</div>;
+  // Se está carregando, exibe o carregamento
+  if (isLoading) return <div>Carregando...</div>;
 
   return (
     <div className="form-container">
@@ -59,11 +68,12 @@ const AtualizarConsulta = () => {
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Paciente:</label>
+          {/* O campo de paciente fica apenas como texto, pois o ID já está registrado */}
           <input
             type="text"
             name="paciente_id"
-            value={consulta.paciente_id}
-            onChange={handleChange}
+            value={consulta.paciente_id} // Valor do ID do paciente
+            readOnly
           />
         </div>
         <div className="form-group">
