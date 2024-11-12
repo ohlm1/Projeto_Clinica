@@ -11,7 +11,7 @@ def get_paciente_by_id(paciente_id):
     paciente = Paciente.query.get(paciente_id)
     if not paciente:
         raise ValueError('Paciente não encontrado')
-    return paciente
+    return paciente 
 
 # Create a new consulta (POST request)
 @consulta_blueprint.route('/criar_consulta', methods=['POST'])
