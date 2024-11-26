@@ -3,16 +3,18 @@ import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
   const [showPatients, setShowPatients] = useState(false);
-  const navigate = useNavigate();  // Use the useNavigate hook for navigation
+  const navigate = useNavigate();
 
-  // Function to toggle the display of patients list
   const togglePatientsList = () => {
     setShowPatients(!showPatients);
   };
 
-  // Function to navigate to the patients page
-  const handleRedirect = () => {
-    navigate('/pacientes');  // Redirect to the /pacientes route
+  const handleRedirectPatients = () => {
+    navigate('/pacientes');
+  };
+
+  const handleRedirectConsultations = () => {
+    navigate('/consultas');
   };
 
   return (
@@ -35,17 +37,20 @@ const HomePage = () => {
         <section id="servicos">
           <h2>Serviços</h2>
           <p>Oferecemos diversos serviços para atender suas necessidades.</p>
-          <button className="botao-redondo" onClick={handleRedirect}>Listar Pacientes</button>
+          <div className="button-container">
+            <button className="botao-redondo" onClick={handleRedirectPatients}>Listar Pacientes</button>
+            <button className="botao-redondo" onClick={handleRedirectConsultations}>Listar Consultas</button>
+          </div>
           {showPatients && (
             <div className="lista-pacientes" id="lista-pacientes">
-              {/* You can populate this with dynamic patient data */}
+              {/* Conteúdo dinâmico */}
             </div>
           )}
         </section>
 
         <section id="contato">
           <h2>Contato</h2>
-          <p>Entre em contato conosco através do e-mail: contato@meuprojeto.com</p>
+          <p>Entre em contato conosco através do e-mail: contato@fisioeasy.com</p>
         </section>
       </main>
 
@@ -63,7 +68,7 @@ const HomePage = () => {
         header {
           background: #333;
           color: #fff;
-          padding: 3px 0;
+          padding: 10px 0;
           text-align: center;
         }
         nav {
@@ -85,14 +90,12 @@ const HomePage = () => {
         }
         section {
           max-width: 600px;
-          height: 200px;
           margin-bottom: 20px;
           text-align: center;
           background: white;
           padding: 15px;
           border-radius: 10px;
           box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-          box-sizing: border-box;
         }
         h2 {
           color: #28a745;
@@ -100,33 +103,31 @@ const HomePage = () => {
         p {
           color: #333;
         }
+        .button-container {
+          display: flex;
+          justify-content: center;
+          gap: 10px; /* Espaço entre os botões */
+          margin-top: 20px;
+        }
         .botao-redondo {
           background-color: #28a745;
           color: white;
           border: none;
           border-radius: 15px;
-          width: 120px;
+          width: 150px;
           height: 40px;
           cursor: pointer;
           font-size: 16px;
-          margin-top: 20px;
           transition: background-color 0.3s;
         }
         .botao-redondo:hover {
           background-color: #218838;
-        }
-        .lista-pacientes {
-          margin-top: 20px;
-          text-align: left;
         }
         footer {
           background: #333;
           color: #fff;
           text-align: center;
           padding: 10px 0;
-          position: relative;
-          width: 100%;
-          bottom: 0;
         }
       `}</style>
     </div>

@@ -22,7 +22,7 @@ root.render(
         <Route path='/cadastro_paciente' element={<RegistroPacientes />} />
         <Route path='/atualizar-paciente/:id' element={<AtualizarPaciente />} />
         <Route path='*' element={<NotFound />} />
-        <Route path='/1234' element={<HomePage />} />
+        <Route path='/' element={<HomePage />} />
         <Route path='/consultas' element={<ListaConsulta />} />
         <Route path='/atualizar_consulta/:id' element={<AtualizarConsulta />} />
         <Route path='/criar_consulta' element={<CriarConsulta />} />

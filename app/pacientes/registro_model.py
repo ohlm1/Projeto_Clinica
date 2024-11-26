@@ -1,7 +1,6 @@
 from __init__ import db
 from datetime import datetime
 
-
 class Endereco(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     logradouro = db.Column(db.String(100), nullable=False)
@@ -39,8 +38,12 @@ class Endereco(db.Model):
     def deletar_endereco_por_id(cls, id):
         endereco = cls.buscar_endereco(id)
         if endereco:
-            db.session.delete(endereco)
-            db.session.commit()
+            try:
+                db.session.delete(endereco)
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                raise Exception(f"Erro ao deletar endereço: {str(e)}")
         else:
             raise Exception(f"Endereço com ID {id} não encontrado.")
 
