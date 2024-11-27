@@ -95,6 +95,7 @@ const ListaPacientes = () => {
                             <td>
                                 <button onClick={() => handleEdit(paciente.id)}>Editar</button>
                                 <button onClick={() => handleDelete(paciente.id)}>Deletar</button>
+                                <button> Inativar</button>
                             </td>
                         </tr>
                     ))}
