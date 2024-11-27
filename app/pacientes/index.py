@@ -121,14 +121,19 @@ def listar_enderecos():
     enderecos = Endereco.listar_enderecos()
     return jsonify([endereco.to_dict() for endereco in enderecos])  # Return a list of addresses
 
-@paciente_blueprint.route('/api/inativar_paciente',methods=['PUT'])
-def inativar_paciente():
+@paciente_blueprint.route('/api/inativar_paciente/<int:id>', methods=['PUT'])
+def inativar_paciente(id):
     try:
-        paciente = Paciente.inativar_paciente_por_id(id)
-        if paciente:
-            return jsonify({"message": "Paciente Inativado com sucesso"})
-        else:
+        # Chama o método de inativar paciente por ID
+        paciente = Paciente.query.get(id)
+        if not paciente:
             return jsonify({"error": "Paciente não encontrado"}), 404
+
+        paciente.status = 'inativo'
+        db.session.commit()
+
+        return jsonify({"message": "Paciente Inativado com sucesso"}), 200
     except Exception as e:
         print(f"Erro ao Inativar paciente: {e}")
         return jsonify({"error": "Erro interno ao Inativar paciente"}), 500
+

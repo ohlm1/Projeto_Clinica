@@ -19,7 +19,6 @@ def get_paciente_by_id(paciente_id):
         raise ValueError(f"Paciente com ID {paciente_id} não encontrado.")
     return paciente
 
-# Criar consulta (POST)
 @consulta_blueprint.route('/criar_consulta', methods=['POST'])
 def criar_consulta():
     try:
@@ -33,7 +32,7 @@ def criar_consulta():
         paciente = get_paciente_by_id(paciente_id)
 
         # Verificar se o paciente está ativo
-        if paciente.status != 'ativo':
+        if paciente.status == 'inativo':
             return erro_resposta(f'Paciente com ID {paciente_id} está inativo. Não é possível criar consulta.', 400)
 
         # Validação de data e hora

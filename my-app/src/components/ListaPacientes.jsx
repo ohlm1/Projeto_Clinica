@@ -12,7 +12,7 @@ const ListaPacientes = () => {
         const fetchPacientes = async () => {
             setLoading(true);
             try {
-                const response = await fetch('http://localhost:5000/api/pacientes');
+                const response = await fetch('http://127.0.0.1:5000/api/pacientes');
                 if (!response.ok) {
                     throw new Error('Erro ao buscar pacientes');
                 }
@@ -38,7 +38,7 @@ const ListaPacientes = () => {
         if (!confirmDelete) return;  // Exit if not confirmed
 
         try {
-            const response = await fetch(`http://localhost:5000/api/delete_paciente/${id}`, { method: 'DELETE' });
+            const response = await fetch(`http://127.0.0.1:5000/api/delete_paciente/${id}`, { method: 'DELETE' });
 
             if (!response.ok) {
                 const errorMessage = await response.text();
@@ -53,10 +53,27 @@ const ListaPacientes = () => {
         }
     };
 
-    const handleDesativate = async () =>
-        {
-            const response = await fetch(`http://localhost:5000/api/Inativar/{id}`,{method: 'PUT'})
-        }    
+    const handleDesativate = async (id) => {
+        const confirmDeactivate = window.confirm('Tem certeza que deseja inativar este paciente?');
+        if (!confirmDeactivate) return;  // Exit if not confirmed
+    
+        try {
+            const response = await fetch(`http://127.0.0.1:5000/api/inativar_paciente/${id}`, { method: 'PUT' });
+    
+            if (!response.ok) {
+                const errorMessage = await response.text();
+                throw new Error(errorMessage || 'Erro ao inativar paciente');
+            }
+    
+            // Atualizar o status do paciente para "inativo" localmente
+            setPacientes(prev => 
+                prev.map(p => p.id === id ? { ...p, status: 'inativo' } : p)
+            );
+        } catch (error) {
+            console.error('Error during fetch:', error);
+            alert(`Ocorreu um erro ao inativar o paciente: ${error.message}`);
+        }
+    };  
     const handleRegister = () => {
         navigate('/cadastro_paciente');
     };

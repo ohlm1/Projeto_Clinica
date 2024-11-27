@@ -60,7 +60,7 @@ class Paciente(db.Model):
     endereco_id = db.Column(db.Integer, db.ForeignKey('endereco.id'))
     endereco = db.relationship('Endereco', backref=db.backref('paciente', uselist=False), cascade="all, delete")  # Cascade delete
     data_nascimento = db.Column(db.Date, nullable=True)
-    status = db.Column(db.String(10), nullable=False, default='ativo')  # Coluna de status com valor padrão 'ativo'
+    status = db.Column(db.String(10), nullable=False)  # Coluna de status com valor padrão 'ativo'
 
     def __init__(self, nome, CPF, telefone, email, data_nascimento, endereco_id=None, status='ativo'):
         self.nome = nome
