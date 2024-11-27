@@ -53,6 +53,10 @@ const ListaPacientes = () => {
         }
     };
 
+    const handleDesativate = async () =>
+        {
+            const response = await fetch(`http://localhost:5000/api/Inativar/{id}`,{method: 'PUT'})
+        }    
     const handleRegister = () => {
         navigate('/cadastro_paciente');
     };
@@ -73,6 +77,7 @@ const ListaPacientes = () => {
                         <th>Telefone</th>
                         <th>Email</th>
                         <th>Endereço</th>
+                        <th>Status</th>
                         <th>Ações</th>
                     </tr>
                 </thead>
@@ -93,9 +98,12 @@ const ListaPacientes = () => {
                                 )}
                             </td>
                             <td>
+                                {paciente.status}
+                            </td>
+                            <td>
                                 <button onClick={() => handleEdit(paciente.id)}>Editar</button>
                                 <button onClick={() => handleDelete(paciente.id)}>Deletar</button>
-                                <button> Inativar</button>
+                                <button onClick={() => handleDesativate(paciente.id)}> Inativar</button>
                             </td>
                         </tr>
                     ))}

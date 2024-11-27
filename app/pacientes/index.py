@@ -120,3 +120,15 @@ def deletar_endereco(id):
 def listar_enderecos():
     enderecos = Endereco.listar_enderecos()
     return jsonify([endereco.to_dict() for endereco in enderecos])  # Return a list of addresses
+
+@paciente_blueprint.route('/api/inativar_paciente',methods=['PUT'])
+def inativar_paciente():
+    try:
+        paciente = Paciente.inativar_paciente_por_id(id)
+        if paciente:
+            return jsonify({"message": "Paciente Inativado com sucesso"})
+        else:
+            return jsonify({"error": "Paciente não encontrado"}), 404
+    except Exception as e:
+        print(f"Erro ao Inativar paciente: {e}")
+        return jsonify({"error": "Erro interno ao Inativar paciente"}), 500

@@ -60,14 +60,16 @@ class Paciente(db.Model):
     endereco_id = db.Column(db.Integer, db.ForeignKey('endereco.id'))
     endereco = db.relationship('Endereco', backref=db.backref('paciente', uselist=False), cascade="all, delete")  # Cascade delete
     data_nascimento = db.Column(db.Date, nullable=True)
+    status = db.Column(db.String(10), nullable=False, default='ativo')  # Coluna de status com valor padrão 'ativo'
 
-    def __init__(self, nome, CPF, telefone, email, data_nascimento, endereco_id=None):
+    def __init__(self, nome, CPF, telefone, email, data_nascimento, endereco_id=None, status='ativo'):
         self.nome = nome
         self.CPF = CPF
         self.telefone = telefone
         self.email = email
         self.data_nascimento = data_nascimento
         self.endereco_id = endereco_id
+        self.status = status  # Recebe o status na criação
 
     def to_dict(self):
         return {
@@ -77,12 +79,13 @@ class Paciente(db.Model):
             "telefone": self.telefone,
             "email": self.email,
             "data_nascimento": self.data_nascimento.isoformat() if self.data_nascimento else None,  # Convert to ISO format
+            "status": self.status,  # Inclui o status no dicionário
             "endereco": self.endereco.to_dict() if self.endereco else None
         }
 
     @classmethod
-    def criar_paciente(cls, nome, CPF, telefone, email, data_nascimento):
-        novo_paciente = cls(nome=nome, CPF=CPF, telefone=telefone, email=email, data_nascimento=data_nascimento, endereco_id=None)
+    def criar_paciente(cls, nome, CPF, telefone, email, data_nascimento, status='ativo'):
+        novo_paciente = cls(nome=nome, CPF=CPF, telefone=telefone, email=email, data_nascimento=data_nascimento, status=status, endereco_id=None)
         db.session.add(novo_paciente)
         db.session.commit()
         return novo_paciente
@@ -98,12 +101,14 @@ class Paciente(db.Model):
     def buscar_paciente(cls, id):
         return cls.query.get(id)
 
-    def atualizar_paciente(self, nome, CPF, telefone, email, data_nascimento):
+    def atualizar_paciente(self, nome, CPF, telefone, email, data_nascimento, status=None):
         self.nome = nome
         self.CPF = CPF
         self.telefone = telefone
         self.email = email
         self.data_nascimento = data_nascimento
+        if status:  # Atualiza o status, se fornecido
+            self.status = status
         db.session.commit()
 
     def deletar_paciente(self):
@@ -127,6 +132,20 @@ class Paciente(db.Model):
     @classmethod
     def listar_pacientes(cls):
         return cls.query.all()
+
+    @classmethod
+    def inativar_paciente_por_id(cls, id):
+        paciente = cls.buscar_paciente(id)
+        if paciente:
+            try:
+                paciente.status = 'inativo'
+                db.session.commit()
+                return paciente
+            except Exception as e:
+                db.session.rollback() 
+                raise Exception(f"Erro ao inativar paciente: {str(e)}")
+        else:
+            raise PacienteNaoEcontrado(f"Paciente com ID {id} não encontrado.")
 
 class PacienteNaoEcontrado(Exception):
     pass

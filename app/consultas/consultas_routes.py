@@ -32,6 +32,10 @@ def criar_consulta():
 
         paciente = get_paciente_by_id(paciente_id)
 
+        # Verificar se o paciente está ativo
+        if paciente.status != 'ativo':
+            return erro_resposta(f'Paciente com ID {paciente_id} está inativo. Não é possível criar consulta.', 400)
+
         # Validação de data e hora
         data_hora_str = form_data.get('data_hora')
         if not data_hora_str:
@@ -126,7 +130,7 @@ def atualizar_consulta(id):
     except Exception as e:
         return erro_resposta(f'Erro inesperado: {str(e)}', 500)
 
-# Deletar consulta (DELETE)
+
 @consulta_blueprint.route('/deletar_consulta/<int:id>', methods=['DELETE'])
 def deletar_consulta(id):
     try:
